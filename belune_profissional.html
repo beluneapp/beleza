@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Belune — Profissional</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p:#6D28D9;--p2:#8B5CF6;--p3:#EDE9FE;--p4:#F5F3FF;
+  --dk:#111827;--mid:#374151;--soft:#6B7280;--muted:#9CA3AF;
+  --line:#F3F4F6;--bg:#F7F7F9;--w:#FFF;
+  --gold:#F59E0B;--red:#EF4444;--green:#10B981;--amber:#F97316;
+  --r:16px;--r2:12px;
+  --sh:0 1px 12px rgba(0,0,0,.07);
+  --shp:0 6px 24px rgba(109,40,217,.22);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito Sans',sans-serif;background:#130024;
+  display:flex;justify-content:center;align-items:center;
+  min-height:100vh;padding:20px}
+
+/* ── PHONE ── */
+.phone{width:100%;max-width:390px;border-radius:48px;padding:10px;
+  background:#0a0018;box-shadow:0 60px 120px rgba(0,0,0,.7),
+  0 0 0 1px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.1)}
+.screen{border-radius:40px;height:820px;overflow:hidden;
+  background:var(--bg);display:flex;flex-direction:column;position:relative}
+
+/* ── STATUS BAR ── */
+.sbar{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 24px 4px;font-size:12px;font-weight:800;flex-shrink:0;
+  position:absolute;top:0;left:0;right:0;z-index:30;pointer-events:none}
+.sbar.dark{color:#fff}
+.sbar.light{color:var(--dk)}
+.sbar-r{display:flex;gap:5px;align-items:center}
+
+/* ── PAGES ── */
+.pg{display:none;flex-direction:column;height:100%;
+  animation:pgIn .2s ease;position:absolute;inset:0}
+.pg.on{display:flex}
+@keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SCROLL ── */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden}
+.scroll::-webkit-scrollbar{display:none}
+
+/* ══════════════════════════
+   SIDE DRAWER (iFood style)
+══════════════════════════ */
+.drawer-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);
+  z-index:200;opacity:0;pointer-events:none;transition:opacity .28s;
+  backdrop-filter:blur(4px)}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer{position:absolute;top:0;left:-300px;bottom:0;width:280px;
+  background:var(--w);z-index:201;transition:left .28s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;border-radius:0 24px 24px 0;
+  box-shadow:8px 0 40px rgba(0,0,0,.2)}
+.drawer.open{left:0}
+
+.drawer-head{background:linear-gradient(160deg,#3B0764,#6D28D9);
+  padding:52px 20px 20px;border-radius:0 24px 0 0}
+.drawer-head img{width:60px;height:60px;border-radius:50%;object-fit:cover;
+  border:3px solid rgba(255,255,255,.4);margin-bottom:12px;display:block}
+.drawer-head h3{color:#fff;font-size:17px;font-weight:900}
+.drawer-head p{color:rgba(255,255,255,.7);font-size:12px;font-weight:600;margin-top:2px}
+.drawer-badge{display:inline-flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,.2);color:#fff;border-radius:50px;
+  padding:4px 12px;font-size:11px;font-weight:800;margin-top:8px}
+
+.drawer-body{flex:1;overflow-y:auto;padding:12px 0}
+.drawer-body::-webkit-scrollbar{display:none}
+.d-section{padding:8px 20px 4px;font-size:10px;font-weight:900;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.d-item{display:flex;align-items:center;gap:14px;padding:14px 20px;
+  cursor:pointer;transition:background .15s;border-radius:0}
+.d-item:hover,.d-item:active{background:var(--p4)}
+.d-item.active{background:var(--p3)}
+.d-item.active .d-label{color:var(--p);font-weight:800}
+.d-item.active .d-icon{background:var(--p);color:#fff}
+.d-icon{width:38px;height:38px;border-radius:12px;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  flex-shrink:0;transition:background .15s}
+.d-label{font-size:14px;font-weight:700;color:var(--mid)}
+.d-badge{margin-left:auto;background:var(--red);color:#fff;
+  border-radius:50px;padding:2px 8px;font-size:11px;font-weight:800}
+
+.drawer-foot{padding:16px 20px;border-top:1px solid var(--line)}
+.d-mode-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:var(--dk);border-radius:var(--r2);cursor:pointer}
+.d-mode-btn span{color:#fff;font-size:14px;font-weight:800;flex:1}
+.d-mode-btn .arrow{color:rgba(255,255,255,.5);font-size:18px}
+
+/* ── BOTTOM NAV ── */
+.bnav{display:flex;background:var(--w);border-top:1px solid var(--line);
+  padding:8px 0 16px;flex-shrink:0;border-radius:0 0 40px 40px;z-index:10}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:4px 0}
+.bni svg{width:23px;height:23px;stroke:var(--muted);fill:none;stroke-width:1.8;transition:stroke .18s}
+.bni span{font-size:10px;font-weight:700;color:var(--muted);transition:color .18s}
+.bni.on svg{stroke:var(--p)}
+.bni.on span{color:var(--p)}
+.bni-dot{width:6px;height:6px;background:var(--red);border-radius:50%;
+  position:absolute;top:0;right:2px}
+.bni-wrap{position:relative;display:inline-block}
+
+/* ── GRADIENT HEADER ── */
+.ghdr{background:linear-gradient(160deg,#3B0764 0%,#6D28D9 60%,#7C3AED 100%);
+  flex-shrink:0;padding-top:48px}
+
+/* ── BUTTONS ── */
+.btn{display:block;width:100%;padding:15px;background:var(--p);color:#fff;
+  border:none;border-radius:var(--r2);font-family:'Nunito Sans',sans-serif;
+  font-size:15px;font-weight:800;cursor:pointer;transition:all .18s;
+  box-shadow:var(--shp);letter-spacing:.2px}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--p);border:2px solid var(--p);box-shadow:none}
+.btn.green{background:var(--green);box-shadow:0 4px 16px rgba(16,185,129,.3)}
+.btn.red{background:var(--red);box-shadow:0 4px 16px rgba(239,68,68,.3)}
+.btn.sm{padding:10px 18px;font-size:13px;width:auto;border-radius:10px;box-shadow:none}
+
+/* ── CARDS ── */
+.card{background:var(--w);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:10px}
+
+/* ── SECTION HEADER ── */
+.sec{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 10px}
+.sec h3{font-size:17px;font-weight:900;color:var(--dk)}
+.sec a{font-size:13px;font-weight:700;color:var(--p);cursor:pointer}
+
+/* ── PRO CARDS (APPOINTMENT) ── */
+.apt-row{display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--line)}
+.apt-row:last-child{border:none}
+.apt-row img{width:48px;height:48px;border-radius:12px;object-fit:cover;flex-shrink:0}
+.apt-info{flex:1;min-width:0}
+.apt-info h4{font-size:14px;font-weight:800;color:var(--dk);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.apt-info p{font-size:12px;color:var(--soft);margin-top:2px}
+.apt-right{flex-shrink:0;text-align:right}
+.apt-time{font-size:13px;font-weight:800;color:var(--p)}
+.apt-price{font-size:12px;color:var(--soft);margin-top:2px}
+
+/* ── STATUS PILLS ── */
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:50px;
+  padding:4px 10px;font-size:11px;font-weight:800}
+.pill.green{background:#D1FAE5;color:#065F46}
+.pill.amber{background:#FEF3C7;color:#92400E}
+.pill.blue{background:#DBEAFE;color:#1E40AF}
+.pill.red{background:#FEE2E2;color:#991B1B}
+.pill.purple{background:var(--p3);color:var(--p)}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px 16px}
+.stat-card{background:rgba(255,255,255,.12);border-radius:var(--r2);
+  padding:14px 10px;text-align:center;backdrop-filter:blur(8px)}
+.stat-card .sv{font-size:22px;font-weight:900;color:#fff}
+.stat-card .sl{font-size:10px;font-weight:700;color:rgba(255,255,255,.6);margin-top:3px}
+
+/* ── LEVEL CARD ── */
+.level-card{background:var(--w);border-radius:var(--r);margin:0 16px 12px;
+  padding:16px;box-shadow:var(--sh)}
+.level-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.level-name{font-size:14px;font-weight:900;color:var(--dk)}
+.level-badge{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;
+  border-radius:50px;padding:4px 14px;font-size:12px;font-weight:800}
+.progress{background:var(--line);border-radius:50px;height:7px;margin-bottom:6px;overflow:hidden}
+.pf{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--p),var(--p2))}
+.level-note{font-size:12px;color:var(--soft);font-weight:600}
+.level-note b{color:var(--p)}
+
+/* ── QUICK ACTIONS ── */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 14px}
+.qa{background:var(--w);border-radius:var(--r);padding:16px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  box-shadow:var(--sh);transition:transform .18s}
+.qa:active{transform:scale(.97)}
+.qa-icon{width:44px;height:44px;border-radius:14px;background:var(--p3);
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.qa h4{font-size:13px;font-weight:800;color:var(--dk)}
+.qa p{font-size:11px;color:var(--soft);margin-top:2px}
+
+/* ── FINANCIAL ── */
+.fin-hero{background:linear-gradient(160deg,#3B0764,#6D28D9);
+  padding:16px 20px 28px;flex-shrink:0;padding-top:52px}
+.fin-hero h3{color:rgba(255,255,255,.65);font-size:13px;font-weight:700;margin-bottom:4px}
+.fin-amount{color:#fff;font-size:38px;font-weight:900}
+.fin-withdraw{background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.3);
+  border-radius:50px;padding:10px 24px;font-family:'Nunito Sans',sans-serif;
+  font-size:14px;font-weight:800;cursor:pointer;margin-top:14px;
+  backdrop-filter:blur(8px);transition:all .18s}
+.fin-withdraw:hover{background:rgba(255,255,255,.28)}
+
+.fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;
+  margin-top:-18px;margin-bottom:14px}
+.fin-card{background:var(--w);border-radius:var(--r2);padding:14px;box-shadow:var(--sh)}
+.fc-lbl{font-size:11px;font-weight:700;color:var(--soft);margin-bottom:4px}
+.fc-val{font-size:20px;font-weight:900;color:var(--dk)}
+.fc-val.green{color:var(--green)}
+.fc-val.red{color:var(--red)}
+
+.tx-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.tx-item:last-child{border:none}
+.tx-item img{width:42px;height:42px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.tx-info h4{font-size:14px;font-weight:700;color:var(--dk)}
+.tx-info p{font-size:12px;color:var(--soft);margin-top:2px}
+.tx-amount{margin-left:auto;font-size:16px;font-weight:900;color:var(--green);flex-shrink:0}
+
+/* ── DATE PICKER ── */
+.date-strip{display:flex;gap:8px;overflow-x:auto;padding:16px 16px 0}
+.date-strip::-webkit-scrollbar{display:none}
+.dpill{min-width:52px;height:68px;border-radius:14px;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .18s;gap:2px;flex-shrink:0}
+.dpill.on{background:var(--p);box-shadow:0 4px 14px rgba(109,40,217,.35)}
+.dpill .dnum{font-size:22px;font-weight:900;color:var(--dk)}
+.dpill .dwd{font-size:10px;font-weight:700;color:var(--soft)}
+.dpill.on .dnum,.dpill.on .dwd{color:#fff}
+
+/* ── REVIEW CARD ── */
+.rev{background:var(--w);border-radius:var(--r);padding:16px;
+  box-shadow:var(--sh);margin-bottom:10px}
+.rev-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.rev-head img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.rev-head-info h4{font-size:14px;font-weight:800;color:var(--dk)}
+.rev-head-info p{font-size:11px;color:var(--soft);margin-top:2px}
+.rev-stars{margin-left:auto;display:flex;gap:2px}
+.rev-stars span{color:var(--gold);font-size:14px}
+.rev-stars span.off{color:var(--line)}
+.rev p{font-size:13px;color:var(--mid);line-height:1.55}
+.rev-date{font-size:11px;color:var(--muted);margin-top:8px;font-weight:600}
+
+/* ── PROFILE ── */
+.prof-cover{position:relative;flex-shrink:0}
+.prof-cover img.cover-img{width:100%;height:180px;object-fit:cover}
+.cover-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 50%)}
+.prof-avatar{position:absolute;bottom:-36px;left:20px;
+  width:72px;height:72px;border-radius:50%;object-fit:cover;
+  border:4px solid var(--w);box-shadow:var(--sh)}
+.prof-edit-btn{position:absolute;bottom:14px;right:16px;
+  background:rgba(255,255,255,.2);backdrop-filter:blur(8px);
+  color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:50px;
+  padding:7px 16px;font-family:'Nunito Sans',sans-serif;
+  font-size:12px;font-weight:800;cursor:pointer}
+
+.prof-info{padding:46px 20px 14px}
+.prof-info h2{font-size:20px;font-weight:900;color:var(--dk)}
+.prof-info .sub{font-size:13px;color:var(--soft);margin-top:2px}
+.prof-stats{display:flex;gap:20px;margin-top:12px}
+.ps-item{text-align:center}
+.ps-val{font-size:18px;font-weight:900;color:var(--dk)}
+.ps-lbl{font-size:11px;color:var(--soft);font-weight:600}
+
+.cert-card{display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--line)}
+.cert-card:last-child{border:none}
+.cert-icon{width:42px;height:42px;border-radius:12px;background:var(--p3);
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.cert-info{flex:1}
+.cert-info h4{font-size:14px;font-weight:800;color:var(--dk)}
+.cert-info p{font-size:12px;color:var(--soft);margin-top:2px}
+
+/* ── VIDEO ── */
+.vid-hero{border-radius:var(--r);margin:0 16px 12px;overflow:hidden;
+  position:relative;cursor:pointer;box-shadow:var(--sh)}
+.vid-hero img{width:100%;height:155px;object-fit:cover}
+.vid-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6),transparent)}
+.vid-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.92);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  box-shadow:0 4px 20px rgba(0,0,0,.25)}
+.vid-title{position:absolute;bottom:12px;left:14px;color:#fff;
+  font-size:15px;font-weight:900;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.vid-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 14px}
+.vid-mini{border-radius:var(--r2);overflow:hidden;background:var(--w);
+  box-shadow:var(--sh);cursor:pointer}
+.vid-mini img{width:100%;height:86px;object-fit:cover}
+.vid-mini p{font-size:11px;font-weight:700;color:var(--mid);padding:8px;line-height:1.4}
+
+/* ── TOGGLE ── */
+.toggle{width:46px;height:26px;border-radius:50px;background:var(--line);
+  position:relative;transition:background .25s;flex-shrink:0;cursor:pointer}
+.toggle::after{content:'';width:20px;height:20px;border-radius:50%;background:#fff;
+  position:absolute;top:3px;left:3px;transition:left .25s;
+  box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.toggle.on{background:var(--p)}
+.toggle.on::after{left:23px}
+
+/* ── MODAL ── */
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.5);
+  z-index:150;display:none;align-items:flex-end;backdrop-filter:blur(4px)}
+.modal-bg.on{display:flex}
+.modal-sheet{background:var(--w);border-radius:22px 22px 0 0;
+  padding:20px;width:100%;animation:sheetUp .25s ease}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+.sheet-handle{width:38px;height:4px;background:var(--line);
+  border-radius:4px;margin:0 auto 16px}
+
+/* ── TOAST ── */
+.toast{position:absolute;bottom:90px;left:16px;right:16px;
+  background:rgba(17,17,17,.93);color:#fff;border-radius:14px;
+  padding:13px 18px;font-size:13px;font-weight:700;text-align:center;
+  display:none;z-index:999;backdrop-filter:blur(12px);
+  animation:toastIn .25s cubic-bezier(.34,1.56,.64,1)}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.95)}to{opacity:1;transform:none}}
+
+/* ── FIELD ── */
+.field{padding:0 16px;margin-bottom:12px}
+.field label{font-size:11px;font-weight:800;color:var(--soft);
+  display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.field input,.field textarea{width:100%;background:var(--bg);border:1.5px solid var(--line);
+  border-radius:var(--r2);padding:12px 14px;font-family:'Nunito Sans',sans-serif;
+  font-size:14px;font-weight:600;color:var(--dk);outline:none;transition:border-color .18s;resize:none}
+.field input:focus,.field textarea:focus{border-color:var(--p);background:var(--w)}
+
+/* ── LOGO ── */
+.logo{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;
+  color:var(--p);text-align:center;padding:16px 0 8px;letter-spacing:.3px}
+.logo.w{color:#fff}
+
+/* ── HAMBURGER BTN ── */
+.hbtn{width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.18);backdrop-filter:blur(8px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;flex-shrink:0;border:1.5px solid rgba(255,255,255,.25)}
+.hbtn span{display:block;width:16px;height:2px;background:#fff;border-radius:2px}
+
+.hbtn-dark{width:38px;height:38px;border-radius:50%;
+  background:var(--bg);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:4px;cursor:pointer;flex-shrink:0}
+.hbtn-dark span{display:block;width:16px;height:2px;background:var(--dk);border-radius:2px}
+
+/* ── TABS ── */
+.tabs{display:flex;background:var(--w);border-bottom:1px solid var(--line);flex-shrink:0}
+.tab{flex:1;padding:13px;text-align:center;font-size:13px;font-weight:800;
+  color:var(--soft);border-bottom:2.5px solid transparent;cursor:pointer;transition:all .18s}
+.tab.on{color:var(--p);border-bottom-color:var(--p)}
+
+/* ── NOTIFICATION DOT ── */
+.notif-dot{width:8px;height:8px;background:var(--red);border-radius:50%;
+  position:absolute;top:8px;right:8px;border:1.5px solid var(--p)}
+
+/* ── RATING GIVE CARD ── */
+.rate-give{background:linear-gradient(135deg,#3B0764,#6D28D9);
+  border-radius:var(--r);margin:0 16px 12px;padding:18px}
+.rate-give h3{color:#fff;font-size:15px;font-weight:800;margin-bottom:4px}
+.rate-give p{color:rgba(255,255,255,.65);font-size:12px;margin-bottom:14px}
+.rate-stars{display:flex;gap:8px}
+.rate-stars span{font-size:32px;cursor:pointer;transition:transform .18s;
+  filter:grayscale(1) opacity(.35)}
+.rate-stars span.on{filter:none;transform:scale(1.1)}
+
+*::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="screen" id="screen">
+
+<!-- ══════════════ DRAWER ══════════════ -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=140&q=80" alt="Marina">
+    <h3>Marina Silva</h3>
+    <p>Beleza Inclusiva · Marina@belune.com</p>
+    <div class="drawer-badge">⭐ Nível 3 — Expert</div>
+  </div>
+  <div class="drawer-body">
+    <div class="d-section">Profissional</div>
+    <div class="d-item active" onclick="goD('dashboard')">
+      <div class="d-icon">📊</div><span class="d-label">Dashboard</span>
+    </div>
+    <div class="d-item" onclick="goD('agenda')">
+      <div class="d-icon">📅</div><span class="d-label">Minha Agenda</span>
+      <span class="d-badge">3</span>
+    </div>
+    <div class="d-item" onclick="goD('financas')">
+      <div class="d-icon">💰</div><span class="d-label">Financeiro</span>
+    </div>
+    <div class="d-item" onclick="goD('avaliações')">
+      <div class="d-icon">⭐</div><span class="d-label">Avaliações</span>
+    </div>
+    <div class="d-section">Crescimento</div>
+    <div class="d-item" onclick="goD('perfil')">
+      <div class="d-icon">👤</div><span class="d-label">Meu Perfil</span>
+    </div>
+    <div class="d-item" onclick="goD('capacitacao')">
+      <div class="d-icon">🎓</div><span class="d-label">Capacitação</span>
+    </div>
+    <div class="d-item" onclick="goD('parcerias')">
+      <div class="d-icon">🤝</div><span class="d-label">Parcerias</span>
+    </div>
+    <div class="d-section">Crescimento Pro</div>
+    <div class="d-item" onclick="goD('gamificacao')">
+      <div class="d-icon">🏆</div><span class="d-label">Níveis & Taxas</span>
+    </div>
+    <div class="d-item" onclick="goD('impulsionar')">
+      <div class="d-icon">🚀</div><span class="d-label">Impulsionar Serviços</span>
+      <span class="d-badge" style="background:var(--amber)">ADS</span>
+    </div>
+    <div class="d-item" onclick="goD('beneficios')">
+      <div class="d-icon">🎁</div><span class="d-label">Meus Benefícios</span>
+    </div>
+  </div>
+  <div class="drawer-foot">
+    <div class="d-mode-btn" onclick="toast('Mudando para Modo Cliente...')">
+      <div class="d-icon" style="background:rgba(255,255,255,.1)">👤</div>
+      <span>Modo Cliente</span>
+      <span class="arrow">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     DASHBOARD
+══════════════════════════════════ -->
+<div id="p-dashboard" class="pg on">
+  <div class="ghdr" style="padding:52px 16px 16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div>
+        <p style="color:rgba(255,255,255,.7);font-size:13px;font-weight:700">Bom dia,</p>
+        <h2 style="color:#fff;font-size:22px;font-weight:900">Marina Silva 👋</h2>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="position:relative;cursor:pointer" onclick="toast('1 nova solicitação!')">
+          <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div class="notif-dot"></div>
+        </div>
+        <div class="hbtn" onclick="openDrawer()">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="sv">R$ 180</div><div class="sl">Hoje</div></div>
+      <div class="stat-card"><div class="sv">3</div><div class="sl">Atendimentos</div></div>
+      <div class="stat-card"><div class="sv" style="color:var(--gold)">4,9 ★</div><div class="sl">Avaliação</div></div>
+    </div>
+  </div>
+  <div class="scroll">
+    <div class="level-card" style="margin-top:14px">
+      <div class="level-top">
+        <span class="level-name">🎮 Nível 3 — Expert</span>
+        <span class="level-badge">Taxa 10%</span>
+      </div>
+      <div class="progress"><div class="pf" style="width:72%"></div></div>
+      <p class="level-note">72% para Nível 4 — <b>Taxa 7% + Destaque no app!</b></p>
+    </div>
+    <div class="qa-grid">
+      <div class="qa" onclick="goD('agenda')">
+        <div class="qa-icon">📅</div><div><h4>Minha Agenda</h4><p>3 hoje</p></div>
+      </div>
+      <div class="qa" onclick="goD('financas')">
+        <div class="qa-icon">💰</div><div><h4>Financeiro</h4><p>R$ 3.340</p></div>
+      </div>
+      <div class="qa" onclick="goD('avaliações')">
+        <div class="qa-icon">⭐</div><div><h4>Avaliações</h4><p>120 recebidas</p></div>
+      </div>
+      <div class="qa" onclick="goD('capacitacao')">
+        <div class="qa-icon">🎓</div><div><h4>Capacitação</h4><p>4 novos cursos</p></div>
+      </div>
+    </div>
+    <div class="sec"><h3>Próximos Atendimentos</h3><a onclick="goD('agenda')">Ver agenda</a></div>
+    <div class="card" style="margin:0 16px 12px">
+      <div class="apt-row" onclick="openModal()">
+        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80" alt="">
+        <div class="apt-info"><h4>Paula Gomes</h4><p>Manicure e Pedicure · Rua das Flores</p></div>
+        <div class="apt-right"><div class="apt-time">10:00</div><div class="apt-price">R$ 80</div></div>
+      </div>
+      <div class="apt-row" onclick="openModal()">
+        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80" alt="">
+        <div class="apt-info"><h4>Simone Freitas</h4><p>Corte e Escova · Rua Jarlindo</p></div>
+        <div class="apt-right"><div class="apt-time">14:00</div><div class="apt-price">R$ 60</div></div>
+      </div>
+    </div>
+    <div class="logo">Belune</div>
+  </div>
+  <div class="bnav">
+    <div class="bni on" onclick="goD('dashboard')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Dashboard</span>
+    </div>
+    <div class="bni" onclick="goD('agenda')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span>Agenda</span>
+    </div>
+    <div class="bni" onclick="goD('financas')">
+      <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span>Ganhos</span>
+    </div>
+    <div class="bni" onclick="goD('avaliações')">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>Avaliações</span>
+    </div>
+    <div class="bni" onclick="openDrawer()">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <span>Menu</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     AGENDA
+══════════════════════════════════ -->
+<div id="p-agenda" class="pg">
+  <div class="ghdr" style="padding:52px 16px 12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="hbtn" onclick="openDrawer()"><span></span><span></span><span></span></div>
+        <h2 style="color:#fff;font-size:20px;font-weight:900">Minha Agenda</h2>
+      </div>
+      <div class="logo w" style="padding:0;font-size:18px">Belune</div>
+    </div>
+    <div class="date-strip" style="padding:0;margin:0">
+      <div class="dpill on" onclick="pickD(this,'dstrip')"><div class="dnum">24</div><div class="dwd">SEG</div></div>
+      <div class="dpill" onclick="pickD(this,'dstrip')"><div class="dnum">25</div><div class="dwd">TER</div></div>
+      <div class="dpill" onclick="pickD(this,'dstrip')"><div class="dnum">26</div><div class="dwd">QUA</div></div>
+      <div class="dpill" onclick="pickD(this,'dstrip')"><div class="dnum">27</div><div class="dwd">QUI</div></div>
+      <div class="dpill" onclick="pickD(this,'dstrip')"><div class="dnum">28</div><div class="dwd">SEX</div></div>
+      <div class="dpill" onclick="pickD(this,'dstrip')"><div class="dnum">29</div><div class="dwd">SÁB</div></div>
+      <div class="dpill" onclick="pickD(this,'dstrip')"><div class="dnum">30</div><div class="dwd">DOM</div></div>
+    </div>
+  </div>
+  <div class="scroll" style="padding-top:14px">
+    <div style="padding:0 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+      <p style="font-size:13px;font-weight:700;color:var(--soft)">Segunda, 24 Jul · 3 atendimentos</p>
+      <button class="btn sm" onclick="toast('Adicionando disponibilidade...')">+ Horário</button>
+    </div>
+    <div class="card" style="margin:0 16px 12px">
+      <div class="apt-row" onclick="openModal()">
+        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80" alt="">
+        <div class="apt-info"><h4>Paula Gomes</h4><p>Manicure e Pedicure · R$ 80</p><p style="margin-top:4px"><span class="pill green">✓ Confirmado</span></p></div>
+        <div class="apt-right"><div class="apt-time">10:00</div><div class="apt-price">📍 Rua das Flores</div></div>
+      </div>
+      <div class="apt-row" onclick="openModal()">
+        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80" alt="">
+        <div class="apt-info"><h4>Simone Freitas</h4><p>Corte e Escova · R$ 60</p><p style="margin-top:4px"><span class="pill green">✓ Confirmado</span></p></div>
+        <div class="apt-right"><div class="apt-time">14:00</div><div class="apt-price">📍 Rua Jarlindo</div></div>
+      </div>
+      <div class="apt-row" onclick="openModal()">
+        <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=100&q=80" alt="">
+        <div class="apt-info"><h4>Gisely Silva</h4><p>Hidratação · R$ 90</p><p style="margin-top:4px"><span class="pill amber">⏳ Pendente</span></p></div>
+        <div class="apt-right"><div class="apt-time">16:30</div><div class="apt-price">📍 Bairro Miço</div></div>
+      </div>
+    </div>
+    <!-- AVALIE CLIENTE -->
+    <div class="rate-give">
+      <h3>Avalie sua última cliente</h3>
+      <p>Paula Gomes · Manicure · 20 Jul</p>
+      <div class="rate-stars" id="rs-give">
+        <span onclick="setRating('rs-give',1)">★</span>
+        <span onclick="setRating('rs-give',2)">★</span>
+        <span onclick="setRating('rs-give',3)">★</span>
+        <span onclick="setRating('rs-give',4)">★</span>
+        <span onclick="setRating('rs-give',5)">★</span>
+      </div>
+      <div style="margin-top:12px">
+        <input placeholder="Comentário (opcional)..." style="width:100%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);border-radius:10px;padding:10px 14px;font-family:'Nunito Sans',sans-serif;font-size:13px;color:#fff;outline:none" oninput="">
+      </div>
+      <button class="btn" style="margin-top:12px;background:rgba(255,255,255,.2);backdrop-filter:blur(8px)" onclick="toast('Avaliação da cliente enviada! ✓')">ENVIAR AVALIAÇÃO</button>
+    </div>
+    <div class="logo">Belune</div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="goD('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+    <div class="bni on"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span></div>
+    <div class="bni" onclick="goD('financas')"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Ganhos</span></div>
+    <div class="bni" onclick="goD('avaliações')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Avaliações</span></div>
+    <div class="bni" onclick="openDrawer()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Menu</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     FINANCEIRO
+══════════════════════════════════ -->
+<div id="p-financas" class="pg">
+  <div class="fin-hero">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div class="hbtn" onclick="openDrawer()"><span></span><span></span><span></span></div>
+      <h2 style="color:#fff;font-size:16px;font-weight:900">Financeiro</h2>
+      <div class="logo w" style="padding:0;font-size:18px">Belune</div>
+    </div>
+    <h3>Saldo disponível</h3>
+    <div class="fin-amount">R$ 3.340,00</div>
+    <button class="fin-withdraw" onclick="toast('Saque solicitado! Em 1-2 dias úteis.')">Sacar agora</button>
+  </div>
+  <div class="scroll">
+    <div class="fin-grid">
+      <div class="fin-card"><div class="fc-lbl">Pendentes</div><div class="fc-val">R$ 320</div></div>
+      <div class="fin-card"><div class="fc-lbl">Recebidos</div><div class="fc-val green">R$ 2.020</div></div>
+      <div class="fin-card"><div class="fc-lbl">A Receber</div><div class="fc-val">R$ 1.320</div></div>
+      <div class="fin-card"><div class="fc-lbl">Taxa (N3·10%)</div><div class="fc-val red">−R$ 320</div></div>
+    </div>
+    <div class="level-card">
+      <div class="level-top"><span class="level-name">🏆 Gamificação de Taxas</span><span class="level-badge">N3: 10%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--soft);margin-bottom:6px">
+        <span>N1:20%</span><span>N2:15%</span><span style="color:var(--p)">N3:10%←</span><span>N4:7%</span>
+      </div>
+      <div class="progress"><div class="pf" style="width:72%"></div></div>
+      <p class="level-note">28% para Nível 4 — <b>Taxa 7% + Destaque no app</b></p>
+    </div>
+    <div class="sec"><h3>Últimas Transações</h3><a onclick="toast('Exportando relatório...')">Exportar</a></div>
+    <div class="card" style="margin:0 16px 12px">
+      <div class="tx-item"><img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=80&q=80" alt=""><div class="tx-info"><h4>Gisely Silva</h4><p>Qua, 12 Jul · Hidratação</p></div><div class="tx-amount">+R$ 180</div></div>
+      <div class="tx-item"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt=""><div class="tx-info"><h4>Paula Gomes</h4><p>Ter, 11 Jul · Manicure</p></div><div class="tx-amount">+R$ 80</div></div>
+      <div class="tx-item"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=80" alt=""><div class="tx-info"><h4>Simone Freitas</h4><p>Seg, 10 Jul · Corte e Escova</p></div><div class="tx-amount">+R$ 60</div></div>
+    </div>
+    <div class="logo">Belune</div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="goD('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+    <div class="bni" onclick="goD('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span></div>
+    <div class="bni on"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Ganhos</span></div>
+    <div class="bni" onclick="goD('avaliações')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Avaliações</span></div>
+    <div class="bni" onclick="openDrawer()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Menu</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     AVALIAÇÕES (RECEBIDAS + DADAS)
+══════════════════════════════════ -->
+<div id="p-avaliações" class="pg">
+  <div style="background:var(--w);padding:52px 16px 0;flex-shrink:0;box-shadow:var(--sh)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <div class="hbtn-dark" onclick="openDrawer()"><span></span><span></span><span></span></div>
+      <h2 style="font-size:20px;font-weight:900;color:var(--dk)">Avaliações</h2>
+    </div>
+    <!-- SUMMARY -->
+    <div style="display:flex;align-items:center;gap:20px;background:var(--p3);border-radius:var(--r);padding:16px;margin-bottom:12px">
+      <div style="text-align:center">
+        <div style="font-size:36px;font-weight:900;color:var(--p)">4,9</div>
+        <div style="color:var(--gold);font-size:16px">★★★★★</div>
+        <div style="font-size:11px;color:var(--soft);font-weight:700;margin-top:2px">120 avaliações</div>
+      </div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:11px;color:var(--soft);width:16px">5</span>
+          <div style="flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden"><div style="width:78%;height:100%;background:var(--gold);border-radius:4px"></div></div>
+          <span style="font-size:11px;color:var(--soft);width:22px">78%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:11px;color:var(--soft);width:16px">4</span>
+          <div style="flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden"><div style="width:16%;height:100%;background:var(--gold);border-radius:4px"></div></div>
+          <span style="font-size:11px;color:var(--soft);width:22px">16%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:11px;color:var(--soft);width:16px">3</span>
+          <div style="flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden"><div style="width:4%;height:100%;background:var(--gold);border-radius:4px"></div></div>
+          <span style="font-size:11px;color:var(--soft);width:22px">4%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:11px;color:var(--soft);width:16px">2</span>
+          <div style="flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden"><div style="width:2%;height:100%;background:var(--gold);border-radius:4px"></div></div>
+          <span style="font-size:11px;color:var(--soft);width:22px">2%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;color:var(--soft);width:16px">1</span>
+          <div style="flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden"><div style="width:0%;height:100%;background:var(--gold);border-radius:4px"></div></div>
+          <span style="font-size:11px;color:var(--soft);width:22px">0%</span>
+        </div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab on" onclick="setTab(this)">Recebidas</div>
+      <div class="tab" onclick="setTab(this)">Que dei</div>
+    </div>
+  </div>
+  <div class="scroll" style="padding:14px 16px">
+    <!-- AVALIAÇÕES RECEBIDAS -->
+    <div id="tab-recebidas">
+      <div class="rev">
+        <div class="rev-head">
+          <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt="">
+          <div class="rev-head-info"><h4>Paula Gomes</h4><p>Manicure e Pedicure · 20 Jul</p></div>
+          <div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+        </div>
+        <p>Perfeita! Muito cuidadosa, ambiente tranquilo. Já agendei de novo!</p>
+        <div class="rev-date">há 4 dias</div>
+      </div>
+      <div class="rev">
+        <div class="rev-head">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=80" alt="">
+          <div class="rev-head-info"><h4>Simone Freitas</h4><p>Corte e Escova · 18 Jul</p></div>
+          <div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span class="off">★</span></div>
+        </div>
+        <p>Atendimento maravilhoso! Muito paciente e atenciosa com minha mãe idosa.</p>
+        <div class="rev-date">há 6 dias</div>
+      </div>
+      <div class="rev">
+        <div class="rev-head">
+          <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=80&q=80" alt="">
+          <div class="rev-head-info"><h4>Gisely Silva</h4><p>Hidratação · 15 Jul</p></div>
+          <div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+        </div>
+        <p>Nunca tive um atendimento igual. Marina entende as limitações de idosos como ninguém!</p>
+        <div class="rev-date">há 9 dias</div>
+      </div>
+      <div class="rev">
+        <div class="rev-head">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80" alt="">
+          <div class="rev-head-info"><h4>Carla Nunes</h4><p>Coloração · 10 Jul</p></div>
+          <div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+        </div>
+        <p>Excelente! Minha filha tem autismo e a Marina soube lidar com toda a situação com muita sensibilidade.</p>
+        <div class="rev-date">há 14 dias</div>
+      </div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="goD('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+    <div class="bni" onclick="goD('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span></div>
+    <div class="bni" onclick="goD('financas')"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Ganhos</span></div>
+    <div class="bni on"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Avaliações</span></div>
+    <div class="bni" onclick="openDrawer()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Menu</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     PERFIL
+══════════════════════════════════ -->
+<div id="p-perfil" class="pg">
+  <div class="scroll">
+    <div class="prof-cover">
+      <img class="cover-img" src="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&q=80" alt="">
+      <div class="cover-overlay"></div>
+      <div style="position:absolute;top:52px;left:16px">
+        <div class="hbtn" onclick="openDrawer()"><span></span><span></span><span></span></div>
+      </div>
+      <button class="prof-edit-btn" onclick="toast('Abrindo edição...')">✏️ Editar</button>
+      <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=140&q=80" class="prof-avatar" alt="">
+    </div>
+    <div class="prof-info">
+      <h2>Marina Silva</h2>
+      <div class="sub">Especialista em Beleza Inclusiva</div>
+      <div class="prof-stats">
+        <div class="ps-item"><div class="ps-val" style="color:var(--gold)">4,9★</div><div class="ps-lbl">Avaliação</div></div>
+        <div class="ps-item"><div class="ps-val">120</div><div class="ps-lbl">Avaliações</div></div>
+        <div class="ps-item"><div class="ps-val">248</div><div class="ps-lbl">Atendimentos</div></div>
+        <div class="ps-item"><div class="ps-val">5+</div><div class="ps-lbl">Anos exp.</div></div>
+      </div>
+    </div>
+    <div style="padding:0 16px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <span class="pill green">✔ Verificada</span>
+      <span class="pill" style="background:#FEF3C7;color:#92400E">⭐ Especialista</span>
+      <span class="pill purple">👴 Idosos</span>
+      <span class="pill purple">🧩 Autismo</span>
+      <span class="pill" style="background:#DBEAFE;color:#1E40AF">🔒 Gravado</span>
+    </div>
+    <div class="sec" style="padding:0 16px 10px"><h3>Certificados</h3><a onclick="toast('Adicionando certificado...')">+ Adicionar</a></div>
+    <div class="card" style="margin:0 16px 12px">
+      <div class="cert-card"><div class="cert-icon">🏅</div><div class="cert-info"><h4>Cuidados para Idosos</h4><p>Clínica Bem Estar · 2023</p></div><span class="pill green">Válido</span></div>
+      <div class="cert-card"><div class="cert-icon">🧩</div><div class="cert-info"><h4>Atend. Neurodivergentes</h4><p>Instituto Neuro · 2024</p></div><span class="pill amber">Andamento</span></div>
+      <div class="cert-card"><div class="cert-icon">💇</div><div class="cert-info"><h4>Colorimetria Avançada</h4><p>Escola Wella · 2022</p></div><span class="pill green">Válido</span></div>
+    </div>
+    <div class="sec" style="padding:0 16px 10px"><h3>Especializações</h3></div>
+    <div style="padding:0 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--w);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh)">
+        <div><h4 style="font-size:14px;font-weight:700;color:var(--dk)">Idosos</h4><p style="font-size:12px;color:var(--soft)">Atendimento especializado</p></div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--w);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh)">
+        <div><h4 style="font-size:14px;font-weight:700;color:var(--dk)">Neurodivergentes</h4><p style="font-size:12px;color:var(--soft)">Treinamento certificado</p></div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--w);border-radius:var(--r2);padding:14px 16px;margin-bottom:8px;box-shadow:var(--sh)">
+        <div><h4 style="font-size:14px;font-weight:700;color:var(--dk)">Mães Atípicas</h4><p style="font-size:12px;color:var(--soft)">Em capacitação</p></div>
+        <div class="toggle" onclick="this.classList.toggle('on')"></div>
+      </div>
+    </div>
+    <div class="logo">Belune</div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="goD('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+    <div class="bni" onclick="goD('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span></div>
+    <div class="bni" onclick="goD('financas')"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Ganhos</span></div>
+    <div class="bni" onclick="goD('avaliações')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Avaliações</span></div>
+    <div class="bni on" onclick="openDrawer()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Menu</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     CAPACITAÇÃO
+══════════════════════════════════ -->
+<div id="p-capacitacao" class="pg">
+  <div class="ghdr" style="padding:52px 16px 16px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="hbtn" onclick="openDrawer()"><span></span><span></span><span></span></div>
+      <h2 style="color:#fff;font-size:18px;font-weight:900">Capacitação</h2>
+      <div class="logo w" style="padding:0;font-size:18px">Belune</div>
+    </div>
+  </div>
+  <div class="scroll" style="padding-top:14px">
+    <div style="padding:0 16px;margin-bottom:12px;display:flex;gap:8px;overflow-x:auto">
+      <span class="pill purple" style="white-space:nowrap;cursor:pointer;padding:8px 14px">Todos</span>
+      <span class="pill" style="background:var(--bg);color:var(--soft);white-space:nowrap;cursor:pointer;padding:8px 14px;font-weight:700">Maquiagem</span>
+      <span class="pill" style="background:var(--bg);color:var(--soft);white-space:nowrap;cursor:pointer;padding:8px 14px;font-weight:700">Cabelo</span>
+      <span class="pill" style="background:var(--bg);color:var(--soft);white-space:nowrap;cursor:pointer;padding:8px 14px;font-weight:700">Idosos</span>
+      <span class="pill" style="background:var(--bg);color:var(--soft);white-space:nowrap;cursor:pointer;padding:8px 14px;font-weight:700">Autismo</span>
+    </div>
+    <div class="vid-hero" onclick="toast('Abrindo: Maquiadora — Técnica Completa...')">
+      <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80" alt="">
+      <div class="vid-overlay"></div>
+      <div class="vid-play">▶</div>
+      <div class="vid-title">Maquiadora — Técnica Completa</div>
+    </div>
+    <div class="vid-grid">
+      <div class="vid-mini" onclick="toast('Abrindo: Maquiagem Inclusiva...')"><img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=300&q=80" alt=""><p>Técnica de Maquiagem Inclusiva</p></div>
+      <div class="vid-mini" onclick="toast('Abrindo: Cuidado para Idosos...')"><img src="https://images.unsplash.com/photo-1581579186913-45ac24ed5d53?w=300&q=80" alt=""><p>Cuidado para Idosos</p></div>
+      <div class="vid-mini" onclick="toast('Abrindo: Corte Afro Inclusivo...')"><img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&q=80" alt=""><p>Corte Afro Inclusivo</p></div>
+      <div class="vid-mini" onclick="toast('Abrindo: Atend. Autismo...')"><img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=300&q=80" alt=""><p>Atend. Neurodivergentes</p></div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <button class="btn" onclick="toast('Carregando mais cursos...')">VER TODOS OS CURSOS</button>
+    </div>
+    <div class="logo">Belune</div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="goD('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+    <div class="bni" onclick="goD('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span></div>
+    <div class="bni" onclick="goD('financas')"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Ganhos</span></div>
+    <div class="bni" onclick="goD('avaliações')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Avaliações</span></div>
+    <div class="bni on" onclick="openDrawer()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Menu</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     PARCERIAS
+══════════════════════════════════ -->
+<div id="p-parcerias" class="pg">
+  <div style="background:var(--w);padding:52px 16px 14px;flex-shrink:0;box-shadow:var(--sh)">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="hbtn-dark" onclick="openDrawer()"><span></span><span></span><span></span></div>
+      <h2 style="font-size:20px;font-weight:900;color:var(--dk)">Parcerias</h2>
+    </div>
+  </div>
+  <div class="scroll" style="padding:14px 16px">
+    <div class="card" style="overflow:hidden;padding:0">
+      <div style="background:#1A1A2E;padding:22px;text-align:center"><div style="font-size:44px;margin-bottom:8px">💆</div><h2 style="color:#fff;font-size:20px;font-weight:900;letter-spacing:3px">WELLA</h2><p style="color:rgba(255,255,255,.45);font-size:10px;letter-spacing:4px">PROFESSIONALS</p></div>
+      <div style="padding:16px">
+        <div style="background:var(--p3);border-radius:var(--r2);padding:12px;text-align:center;margin-bottom:14px"><p style="font-size:15px;font-weight:900;color:var(--p)">Parceria Exclusiva!</p><p style="font-size:12px;color:var(--soft)">Descontos em produtos e cursos certificados</p></div>
+        <p style="font-size:13px;color:var(--soft);line-height:1.6;margin-bottom:14px">Acesse descontos exclusivos em produtos e cursos da Wella através da plataforma Belune.</p>
+        <div style="display:flex;gap:10px">
+          <button class="btn" onclick="toast('Abrindo cadastro Wella...')" style="flex:1">SABER MAIS</button>
+          <button class="btn ghost" style="flex:1">DEPOIS</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="padding:16px">
+      <h3 style="font-size:16px;font-weight:900;color:var(--dk);margin-bottom:10px">🏥 Clínicas Parceiras</h3>
+      <p style="font-size:13px;color:var(--soft);margin-bottom:14px">Treinamento especializado em atendimento a idosos e neurodivergentes.</p>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;background:var(--p3);border-radius:var(--r2);padding:14px;text-align:center;cursor:pointer" onclick="toast('Clínica Bem Estar...')"><div style="font-size:28px;margin-bottom:6px">🏥</div><p style="font-size:12px;font-weight:800;color:var(--dk)">Clínica Bem Estar</p></div>
+        <div style="flex:1;background:var(--p3);border-radius:var(--r2);padding:14px;text-align:center;cursor:pointer" onclick="toast('Instituto Neuro...')"><div style="font-size:28px;margin-bottom:6px">🧠</div><p style="font-size:12px;font-weight:800;color:var(--dk)">Instituto Neuro</p></div>
+      </div>
+    </div>
+    <div class="logo">Belune</div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="goD('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+    <div class="bni" onclick="goD('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span></div>
+    <div class="bni" onclick="goD('financas')"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Ganhos</span></div>
+    <div class="bni" onclick="goD('avaliações')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Avaliações</span></div>
+    <div class="bni on" onclick="openDrawer()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Menu</span></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     GAMIFICAÇÃO & TAXAS
+══════════════════════════════════ -->
+<div id="p-gamificacao" class="pg">
+  <div style="background:var(--w);padding:52px 16px 0;flex-shrink:0;box-shadow:var(--sh)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div class="hbtn-dark" onclick="openDrawer()"><span></span><span></span><span></span></div>
+      <h2 style="font-size:20px;font-weight:900;color:var(--dk)">Níveis & Taxas</h2>
+    </div>
+  </div>
+  <div class="scroll" style="padding:16px 16px 0">
+
+    <!-- CURRENT LEVEL HERO -->
+    <div style="background:linear-gradient(135deg,#3B0764,#6D28D9);border-radius:var(--r);padding:20px;margin-bottom:14px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
+      <div style="position:absolute;bottom:-30px;right:20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.04)"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <p style="color:rgba(255,255,255,.65);font-size:12px;font-weight:700;margin-bottom:4px">SEU NÍVEL ATUAL</p>
+          <h2 style="color:#fff;font-size:26px;font-weight:900">🏆 Expert</h2>
+          <p style="color:rgba(255,255,255,.7);font-size:13px;font-weight:600;margin-top:2px">Nível 3 de 5</p>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:48px">🥈</div>
+          <div style="background:rgba(255,255,255,.2);color:#fff;border-radius:50px;padding:4px 14px;font-size:13px;font-weight:900;margin-top:4px">Taxa: 10%</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,.12);border-radius:10px;height:10px;margin-bottom:8px;overflow:hidden">
+        <div style="width:72%;height:100%;background:linear-gradient(90deg,rgba(255,255,255,.9),rgba(255,255,255,.6));border-radius:10px;position:relative">
+          <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <p style="color:rgba(255,255,255,.65);font-size:12px;font-weight:700">72% concluído</p>
+        <p style="color:rgba(255,255,255,.65);font-size:12px;font-weight:700">Faltam 28% → Nível 4</p>
+      </div>
+    </div>
+
+    <!-- O QUE FALTA -->
+    <div style="background:var(--w);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh)">
+      <p style="font-size:13px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Para atingir o Nível 4</p>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="width:38px;height:38px;border-radius:12px;background:var(--p3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📅</div>
+        <div style="flex:1"><h4 style="font-size:13px;font-weight:800;color:var(--dk)">Mais 8 atendimentos</h4><p style="font-size:12px;color:var(--soft)">Você fez 32 este mês</p></div>
+        <span class="pill green">32/40</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="width:38px;height:38px;border-radius:12px;background:var(--p3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">⭐</div>
+        <div style="flex:1"><h4 style="font-size:13px;font-weight:800;color:var(--dk)">Manter avaliação ≥ 4,7</h4><p style="font-size:12px;color:var(--soft)">Sua média atual: 4,9</p></div>
+        <span class="pill green">✓ OK</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:38px;height:38px;border-radius:12px;background:var(--p3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏅</div>
+        <div style="flex:1"><h4 style="font-size:13px;font-weight:800;color:var(--dk)">1 certificado adicional</h4><p style="font-size:12px;color:var(--soft)">Neurodivergentes em andamento</p></div>
+        <span class="pill amber">50%</span>
+      </div>
+    </div>
+
+    <!-- TODOS OS NÍVEIS -->
+    <p style="font-size:13px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Tabela de Níveis & Taxas</p>
+
+    <!-- NÍVEL 1 -->
+    <div style="background:var(--w);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh);opacity:.7">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-size:32px">🥉</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+            <h3 style="font-size:16px;font-weight:900;color:var(--dk)">Nível 1 — Iniciante</h3>
+            <span class="pill" style="background:var(--line);color:var(--soft)">Concluído</span>
+          </div>
+          <p style="font-size:12px;color:var(--soft)">0 a 10 atendimentos</p>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:900;color:var(--red)">20%</div>
+          <div style="font-size:11px;color:var(--soft)">taxa</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--line);padding-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+        <span class="pill" style="background:var(--line);color:var(--soft)">Perfil básico</span>
+        <span class="pill" style="background:var(--line);color:var(--soft)">Chat com cliente</span>
+        <span class="pill" style="background:var(--line);color:var(--soft)">Agendamento simples</span>
+      </div>
+    </div>
+
+    <!-- NÍVEL 2 -->
+    <div style="background:var(--w);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh);opacity:.75">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-size:32px">🥈</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+            <h3 style="font-size:16px;font-weight:900;color:var(--dk)">Nível 2 — Profissional</h3>
+            <span class="pill" style="background:var(--line);color:var(--soft)">Concluído</span>
+          </div>
+          <p style="font-size:12px;color:var(--soft)">11 a 30 atendimentos</p>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:900;color:var(--amber)">15%</div>
+          <div style="font-size:11px;color:var(--soft)">taxa</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--line);padding-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+        <span class="pill" style="background:var(--line);color:var(--soft)">Badge Verificada</span>
+        <span class="pill" style="background:var(--line);color:var(--soft)">Agenda avançada</span>
+        <span class="pill" style="background:var(--line);color:var(--soft)">Relatório mensal</span>
+      </div>
+    </div>
+
+    <!-- NÍVEL 3 — ATUAL -->
+    <div style="background:linear-gradient(135deg,#EDE9FE,#F5F3FF);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--shp);border:2px solid var(--p)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-size:32px">🏆</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+            <h3 style="font-size:16px;font-weight:900;color:var(--p)">Nível 3 — Expert</h3>
+            <span class="pill purple">Atual ✦</span>
+          </div>
+          <p style="font-size:12px;color:var(--soft)">31 a 60 atendimentos</p>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:900;color:var(--p)">10%</div>
+          <div style="font-size:11px;color:var(--soft)">taxa</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(109,40,217,.15);padding-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+        <span class="pill purple">Badge Especialista</span>
+        <span class="pill purple">Impulsionar serviços</span>
+        <span class="pill purple">Prioridade nas buscas</span>
+        <span class="pill purple">Certificados no perfil</span>
+      </div>
+    </div>
+
+    <!-- NÍVEL 4 -->
+    <div style="background:var(--w);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-size:32px">💎</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+            <h3 style="font-size:16px;font-weight:900;color:var(--dk)">Nível 4 — Elite</h3>
+            <span class="pill amber">Próximo</span>
+          </div>
+          <p style="font-size:12px;color:var(--soft)">61 a 100 atendimentos</p>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:900;color:var(--green)">7%</div>
+          <div style="font-size:11px;color:var(--soft)">taxa</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--line);padding-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+        <span class="pill green">Destaque na busca</span>
+        <span class="pill green">ADS gratuito 1x/mês</span>
+        <span class="pill green">Suporte prioritário</span>
+        <span class="pill green">Badge Elite</span>
+      </div>
+    </div>
+
+    <!-- NÍVEL 5 -->
+    <div style="background:linear-gradient(135deg,#1A1A2E,#2D1B69);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-size:32px">👑</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+            <h3 style="font-size:16px;font-weight:900;color:#fff">Nível 5 — Lenda</h3>
+            <span class="pill" style="background:rgba(255,255,255,.15);color:rgba(255,255,255,.8)">Top</span>
+          </div>
+          <p style="font-size:12px;color:rgba(255,255,255,.5)">100+ atendimentos</p>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:900;color:#A78BFA">5%</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.5)">taxa</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+        <span class="pill" style="background:rgba(167,139,250,.2);color:#C4B5FD">Topo da busca</span>
+        <span class="pill" style="background:rgba(167,139,250,.2);color:#C4B5FD">ADS ilimitado</span>
+        <span class="pill" style="background:rgba(167,139,250,.2);color:#C4B5FD">Taxa 5%</span>
+        <span class="pill" style="background:rgba(167,139,250,.2);color:#C4B5FD">Badge Lenda 👑</span>
+        <span class="pill" style="background:rgba(167,139,250,.2);color:#C4B5FD">Gerente dedicado</span>
+      </div>
+    </div>
+
+    <div class="logo">Belune</div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="goD('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+    <div class="bni" onclick="goD('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span></div>
+    <div class="bni" onclick="goD('financas')"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Ganhos</span></div>
+    <div class="bni" onclick="goD('avaliações')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Avaliações</span></div>
+    <div class="bni on" onclick="openDrawer()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Menu</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     IMPULSIONAR (ADS)
+══════════════════════════════════ -->
+<div id="p-impulsionar" class="pg">
+  <div style="background:var(--w);padding:52px 16px 0;flex-shrink:0;box-shadow:var(--sh)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div class="hbtn-dark" onclick="openDrawer()"><span></span><span></span><span></span></div>
+      <h2 style="font-size:20px;font-weight:900;color:var(--dk)">Impulsionar Serviços</h2>
+    </div>
+  </div>
+  <div class="scroll" style="padding:14px 16px 0">
+
+    <!-- HERO BANNER -->
+    <div style="background:linear-gradient(135deg,#EA580C,#F97316);border-radius:var(--r);padding:20px;margin-bottom:16px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-15px;right:-15px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.08)"></div>
+      <p style="color:rgba(255,255,255,.8);font-size:12px;font-weight:700;margin-bottom:6px">🚀 BELUNE ADS</p>
+      <h2 style="color:#fff;font-size:20px;font-weight:900;margin-bottom:8px">Apareça primeiro para mais clientes</h2>
+      <p style="color:rgba(255,255,255,.8);font-size:13px;line-height:1.5">Destaque seu perfil na busca e receba até <strong>3x mais</strong> agendamentos.</p>
+    </div>
+
+    <!-- STATS CAMPANHA ATIVA -->
+    <div style="background:var(--w);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <h3 style="font-size:15px;font-weight:900;color:var(--dk)">Campanha Ativa</h3>
+        <span class="pill green">● Ativa</span>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--r2);padding:12px;margin-bottom:12px">
+        <p style="font-size:12px;color:var(--soft);font-weight:700;margin-bottom:4px">SERVIÇO IMPULSIONADO</p>
+        <h4 style="font-size:15px;font-weight:800;color:var(--dk)">Corte + Escova</h4>
+        <p style="font-size:12px;color:var(--soft)">Termina em 3 dias · Orçamento: R$ 50</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="text-align:center;background:var(--p3);border-radius:var(--r2);padding:12px">
+          <div style="font-size:20px;font-weight:900;color:var(--p)">142</div>
+          <div style="font-size:10px;color:var(--soft);font-weight:700">Visualizações</div>
+        </div>
+        <div style="text-align:center;background:var(--p3);border-radius:var(--r2);padding:12px">
+          <div style="font-size:20px;font-weight:900;color:var(--p)">23</div>
+          <div style="font-size:10px;color:var(--soft);font-weight:700">Cliques</div>
+        </div>
+        <div style="text-align:center;background:#D1FAE5;border-radius:var(--r2);padding:12px">
+          <div style="font-size:20px;font-weight:900;color:var(--green)">4</div>
+          <div style="font-size:10px;color:var(--soft);font-weight:700">Agendamentos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CRIAR NOVO IMPULSIONAMENTO -->
+    <p style="font-size:13px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Criar novo anúncio</p>
+
+    <!-- STEP 1 — ESCOLHER SERVIÇO -->
+    <div style="background:var(--w);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh)">
+      <p style="font-size:12px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">1 · Escolha o serviço</p>
+      <div id="ads-svc">
+        <div onclick="pickAdsSvc(this)" style="display:flex;align-items:center;justify-content:space-between;background:var(--p3);border:1.5px solid var(--p);border-radius:var(--r2);padding:12px 14px;margin-bottom:8px;cursor:pointer">
+          <div><h4 style="font-size:14px;font-weight:700;color:var(--dk)">Corte de Cabelo</h4><p style="font-size:12px;color:var(--soft)">R$ 80</p></div>
+          <div style="width:20px;height:20px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;border-radius:50%;background:#fff"></div></div>
+        </div>
+        <div onclick="pickAdsSvc(this)" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1.5px solid transparent;border-radius:var(--r2);padding:12px 14px;margin-bottom:8px;cursor:pointer">
+          <div><h4 style="font-size:14px;font-weight:700;color:var(--dk)">Coloração</h4><p style="font-size:12px;color:var(--soft)">R$ 180</p></div>
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--line)"></div>
+        </div>
+        <div onclick="pickAdsSvc(this)" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1.5px solid transparent;border-radius:var(--r2);padding:12px 14px;cursor:pointer">
+          <div><h4 style="font-size:14px;font-weight:700;color:var(--dk)">Hidratação</h4><p style="font-size:12px;color:var(--soft)">R$ 90</p></div>
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--line)"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 — ORÇAMENTO -->
+    <div style="background:var(--w);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--sh)">
+      <p style="font-size:12px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">2 · Escolha o plano</p>
+      <div id="ads-plan" style="display:flex;flex-direction:column;gap:8px">
+        <div onclick="pickAdsPlan(this)" style="display:flex;align-items:center;gap:14px;background:var(--bg);border:1.5px solid transparent;border-radius:var(--r2);padding:14px;cursor:pointer">
+          <div style="width:44px;height:44px;border-radius:12px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⚡</div>
+          <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Básico — 3 dias</h4><p style="font-size:12px;color:var(--soft)">Até 100 visualizações</p></div>
+          <div style="text-align:right;flex-shrink:0"><div style="font-size:16px;font-weight:900;color:var(--dk)">R$ 25</div></div>
+        </div>
+        <div onclick="pickAdsPlan(this)" style="display:flex;align-items:center;gap:14px;background:var(--p3);border:1.5px solid var(--p);border-radius:var(--r2);padding:14px;cursor:pointer">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🚀</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:6px"><h4 style="font-size:14px;font-weight:800;color:var(--p)">Popular — 7 dias</h4><span class="pill purple" style="padding:2px 8px;font-size:10px">RECOMENDADO</span></div>
+            <p style="font-size:12px;color:var(--soft)">Até 500 visualizações</p>
+          </div>
+          <div style="text-align:right;flex-shrink:0"><div style="font-size:16px;font-weight:900;color:var(--p)">R$ 50</div></div>
+        </div>
+        <div onclick="pickAdsPlan(this)" style="display:flex;align-items:center;gap:14px;background:var(--bg);border:1.5px solid transparent;border-radius:var(--r2);padding:14px;cursor:pointer">
+          <div style="width:44px;height:44px;border-radius:12px;background:#1A1A2E;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">💎</div>
+          <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Premium — 15 dias</h4><p style="font-size:12px;color:var(--soft)">Visualizações ilimitadas</p></div>
+          <div style="text-align:right;flex-shrink:0"><div style="font-size:16px;font-weight:900;color:var(--dk)">R$ 90</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 — PÚBLICO -->
+    <div style="background:var(--w);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh)">
+      <p style="font-size:12px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">3 · Público-alvo</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span onclick="this.classList.toggle('on')" class="pill purple on" style="cursor:pointer;padding:8px 14px">👴 Idosos</span>
+        <span onclick="this.classList.toggle('on')" class="pill on" style="cursor:pointer;padding:8px 14px;background:#D1FAE5;color:#065F46">🧩 Autismo</span>
+        <span onclick="this.classList.toggle('on')" class="pill" style="cursor:pointer;padding:8px 14px;background:var(--bg);color:var(--soft)">💜 Mães Atípicas</span>
+        <span onclick="this.classList.toggle('on')" class="pill" style="cursor:pointer;padding:8px 14px;background:var(--bg);color:var(--soft)">♿ Acessibilidade</span>
+        <span onclick="this.classList.toggle('on')" class="pill on" style="cursor:pointer;padding:8px 14px;background:var(--p3);color:var(--p)">🌍 Todos</span>
+      </div>
+    </div>
+
+    <button class="btn" style="background:linear-gradient(135deg,#EA580C,#F97316);box-shadow:0 4px 16px rgba(234,88,12,.35)" onclick="toast('Anúncio criado! Seu serviço já está sendo impulsionado 🚀')">IMPULSIONAR AGORA — R$ 50</button>
+    <div class="logo">Belune</div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="goD('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+    <div class="bni" onclick="goD('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span></div>
+    <div class="bni" onclick="goD('financas')"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Ganhos</span></div>
+    <div class="bni" onclick="goD('avaliações')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Avaliações</span></div>
+    <div class="bni on" onclick="openDrawer()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Menu</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     BENEFÍCIOS (TEMPO NA PLATAFORMA)
+══════════════════════════════════ -->
+<div id="p-beneficios" class="pg">
+  <div style="background:var(--w);padding:52px 16px 0;flex-shrink:0;box-shadow:var(--sh)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div class="hbtn-dark" onclick="openDrawer()"><span></span><span></span><span></span></div>
+      <h2 style="font-size:20px;font-weight:900;color:var(--dk)">Meus Benefícios</h2>
+    </div>
+  </div>
+  <div class="scroll" style="padding:14px 16px 0">
+
+    <!-- TEMPO NA PLATAFORMA HERO -->
+    <div style="background:linear-gradient(135deg,#065F46,#10B981);border-radius:var(--r);padding:20px;margin-bottom:16px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.08)"></div>
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+        <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:28px">🌱</div>
+        <div>
+          <p style="color:rgba(255,255,255,.75);font-size:12px;font-weight:700;margin-bottom:4px">NA PLATAFORMA HÁ</p>
+          <h2 style="color:#fff;font-size:28px;font-weight:900;line-height:1">8 meses</h2>
+          <p style="color:rgba(255,255,255,.7);font-size:12px;margin-top:4px">Membro desde Novembro 2023</p>
+        </div>
+      </div>
+      <!-- TIMELINE ANOS -->
+      <div style="background:rgba(255,255,255,.15);border-radius:50px;height:8px;margin-bottom:6px;overflow:hidden">
+        <div style="width:66%;height:100%;background:rgba(255,255,255,.9);border-radius:50px"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="color:rgba(255,255,255,.65);font-size:11px;font-weight:700">0</span>
+        <span style="color:rgba(255,255,255,.65);font-size:11px;font-weight:700">6m</span>
+        <span style="color:#fff;font-size:11px;font-weight:800">8m ●</span>
+        <span style="color:rgba(255,255,255,.45);font-size:11px;font-weight:700">1 ano</span>
+        <span style="color:rgba(255,255,255,.45);font-size:11px;font-weight:700">2 anos</span>
+      </div>
+    </div>
+
+    <!-- BENEFÍCIOS DESBLOQUEADOS -->
+    <p style="font-size:13px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">✅ Desbloqueados</p>
+
+    <div style="background:var(--w);border-radius:var(--r);overflow:hidden;margin-bottom:14px;box-shadow:var(--sh)">
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)">
+        <div style="width:42px;height:42px;border-radius:12px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🎓</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Acesso a cursos gratuitos</h4><p style="font-size:12px;color:var(--soft)">Desbloqueado ao entrar na plataforma</p></div>
+        <span class="pill green">Ativo</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)">
+        <div style="width:42px;height:42px;border-radius:12px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">💬</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Chat com clientes</h4><p style="font-size:12px;color:var(--soft)">Desbloqueado ao entrar na plataforma</p></div>
+        <span class="pill green">Ativo</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)">
+        <div style="width:42px;height:42px;border-radius:12px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🏅</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Badge Verificada</h4><p style="font-size:12px;color:var(--soft)">Após 1 mês de cadastro</p></div>
+        <span class="pill green">Ativo</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)">
+        <div style="width:42px;height:42px;border-radius:12px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📊</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Relatório financeiro mensal</h4><p style="font-size:12px;color:var(--soft)">Após 3 meses de plataforma</p></div>
+        <span class="pill green">Ativo</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)">
+        <div style="width:42px;height:42px;border-radius:12px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🚀</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Impulsionar serviços (ADS)</h4><p style="font-size:12px;color:var(--soft)">Após 6 meses de plataforma · Nível 3</p></div>
+        <span class="pill green">Ativo</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+        <div style="width:42px;height:42px;border-radius:12px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⭐</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Badge Especialista</h4><p style="font-size:12px;color:var(--soft)">Após certificados validados</p></div>
+        <span class="pill green">Ativo</span>
+      </div>
+    </div>
+
+    <!-- BENEFÍCIOS PRÓXIMOS -->
+    <p style="font-size:13px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">🔒 Próximos benefícios</p>
+
+    <div style="background:var(--w);border-radius:var(--r);overflow:hidden;margin-bottom:14px;box-shadow:var(--sh)">
+      <!-- 1 ANO -->
+      <div style="padding:12px 16px;background:var(--p3);border-bottom:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:14px">🗓️</span>
+          <p style="font-size:12px;font-weight:800;color:var(--p)">Completa 1 ano em Novembro 2024</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);opacity:.6">
+        <div style="width:42px;height:42px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🎁</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">1 ADS grátis por mês</h4><p style="font-size:12px;color:var(--soft)">Impulsionar 1 serviço gratuitamente</p></div>
+        <span class="pill amber">4 meses</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);opacity:.6">
+        <div style="width:42px;height:42px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">💎</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Badge Aniversariante</h4><p style="font-size:12px;color:var(--soft)">Exclusivo para quem completa 1 ano</p></div>
+        <span class="pill amber">4 meses</span>
+      </div>
+      <!-- 2 ANOS -->
+      <div style="padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--line);border-top:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:14px">🗓️</span>
+          <p style="font-size:12px;font-weight:800;color:var(--soft)">Completa 2 anos em Novembro 2025</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);opacity:.45">
+        <div style="width:42px;height:42px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🤝</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Gerente de conta dedicado</h4><p style="font-size:12px;color:var(--soft)">Suporte especializado exclusivo</p></div>
+        <span class="pill" style="background:var(--line);color:var(--soft)">1 ano e 4m</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;opacity:.45">
+        <div style="width:42px;height:42px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">👑</div>
+        <div style="flex:1"><h4 style="font-size:14px;font-weight:800;color:var(--dk)">Acesso ao programa Lenda</h4><p style="font-size:12px;color:var(--soft)">Taxa de 5% + benefícios exclusivos</p></div>
+        <span class="pill" style="background:var(--line);color:var(--soft)">1 ano e 4m</span>
+      </div>
+    </div>
+
+    <!-- CONQUISTAS -->
+    <p style="font-size:13px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">🏅 Conquistas</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+      <div style="background:var(--w);border-radius:var(--r2);padding:14px;text-align:center;box-shadow:var(--sh)">
+        <div style="font-size:28px;margin-bottom:6px">🌟</div>
+        <p style="font-size:11px;font-weight:800;color:var(--dk)">Primeiro atendimento</p>
+      </div>
+      <div style="background:var(--w);border-radius:var(--r2);padding:14px;text-align:center;box-shadow:var(--sh)">
+        <div style="font-size:28px;margin-bottom:6px">💯</div>
+        <p style="font-size:11px;font-weight:800;color:var(--dk)">100 avaliações</p>
+      </div>
+      <div style="background:var(--w);border-radius:var(--r2);padding:14px;text-align:center;box-shadow:var(--sh)">
+        <div style="font-size:28px;margin-bottom:6px">🔥</div>
+        <p style="font-size:11px;font-weight:800;color:var(--dk)">30 dias seguidos</p>
+      </div>
+      <div style="background:var(--w);border-radius:var(--r2);padding:14px;text-align:center;box-shadow:var(--sh)">
+        <div style="font-size:28px;margin-bottom:6px">👴</div>
+        <p style="font-size:11px;font-weight:800;color:var(--dk)">Especialista Idosos</p>
+      </div>
+      <div style="background:var(--w);border-radius:var(--r2);padding:14px;text-align:center;box-shadow:var(--sh)">
+        <div style="font-size:28px;margin-bottom:6px">🧩</div>
+        <p style="font-size:11px;font-weight:800;color:var(--dk)">Certificado Autismo</p>
+      </div>
+      <div style="background:var(--bg);border-radius:var(--r2);padding:14px;text-align:center;box-shadow:var(--sh);opacity:.4">
+        <div style="font-size:28px;margin-bottom:6px">🔒</div>
+        <p style="font-size:11px;font-weight:800;color:var(--soft)">Nível 4 Elite</p>
+      </div>
+    </div>
+
+    <div class="logo">Belune</div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="goD('dashboard')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+    <div class="bni" onclick="goD('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Agenda</span></div>
+    <div class="bni" onclick="goD('financas')"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Ganhos</span></div>
+    <div class="bni" onclick="goD('avaliações')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Avaliações</span></div>
+    <div class="bni on" onclick="openDrawer()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Menu</span></div>
+  </div>
+</div>
+
+<!-- ══════════════ MODAL ══════════════ -->
+<div class="modal-bg" id="modal" onclick="closeModal(event)">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div style="display:flex;gap:14px;align-items:center;margin-bottom:16px">
+      <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" style="width:56px;height:56px;border-radius:14px;object-fit:cover">
+      <div><h3 style="font-size:17px;font-weight:900;color:var(--dk)">Paula Gomes</h3><p style="font-size:13px;color:var(--soft)">Manicure e Pedicure · R$ 80</p><p style="font-size:12px;color:var(--mid);margin-top:2px">24 Jul · 10:00 · Rua das Flores, 215</p></div>
+    </div>
+    <div style="background:var(--p3);border-radius:var(--r2);padding:12px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px">🔒</span>
+      <p style="font-size:13px;font-weight:700;color:var(--p)">Atendimento será gravado automaticamente</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn green" onclick="closeModal2();toast('Pedido aceito! ✓')" style="flex:1">✓ ACEITAR</button>
+      <button class="btn red" onclick="closeModal2();toast('Pedido recusado')" style="flex:1">✕ RECUSAR</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+</div><!-- /screen -->
+</div><!-- /phone -->
+
+<script>
+// ── NAVIGATION ──
+function goD(p){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  const el=document.getElementById('p-'+p);
+  if(el){el.classList.add('on');el.querySelectorAll('.scroll').forEach(s=>s.scrollTop=0)}
+  // update drawer active
+  document.querySelectorAll('.d-item').forEach(i=>i.classList.remove('active'));
+  const di=document.querySelector(`.d-item[onclick*="${p}"]`);
+  if(di)di.classList.add('active');
+  closeDrawer();
+}
+// ── DRAWER ──
+function openDrawer(){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+// ── DATE PICK ──
+function pickD(el,id){
+  document.getElementById(id).querySelectorAll('.dpill').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+// ── TABS ──
+function setTab(el){
+  const tabs=el.closest('.tabs');
+  tabs.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  const idx=Array.from(tabs.querySelectorAll('.tab')).indexOf(el);
+  // toggle content
+  const rev=document.getElementById('tab-recebidas');
+  if(idx===0){
+    rev.innerHTML=`
+    <div class="rev"><div class="rev-head"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt=""><div class="rev-head-info"><h4>Paula Gomes</h4><p>Manicure e Pedicure · 20 Jul</p></div><div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div><p>Perfeita! Muito cuidadosa, ambiente tranquilo. Já agendei de novo!</p><div class="rev-date">há 4 dias</div></div>
+    <div class="rev"><div class="rev-head"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=80" alt=""><div class="rev-head-info"><h4>Simone Freitas</h4><p>Corte e Escova · 18 Jul</p></div><div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span class="off">★</span></div></div><p>Atendimento maravilhoso! Muito paciente e atenciosa com minha mãe idosa.</p><div class="rev-date">há 6 dias</div></div>
+    <div class="rev"><div class="rev-head"><img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=80&q=80" alt=""><div class="rev-head-info"><h4>Gisely Silva</h4><p>Hidratação · 15 Jul</p></div><div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div><p>Nunca tive um atendimento igual. Marina entende as limitações de idosos!</p><div class="rev-date">há 9 dias</div></div>`;
+  } else {
+    rev.innerHTML=`
+    <p style="font-size:12px;color:var(--soft);margin-bottom:12px;font-weight:700">Avaliações que você fez para suas clientes:</p>
+    <div class="rev"><div class="rev-head"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt=""><div class="rev-head-info"><h4>Paula Gomes</h4><p>Manicure · 20 Jul</p></div><div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div><p>Cliente muito pontual e educada. Ambiente limpo e organizado. Recomendo!</p><div class="rev-date">há 4 dias</div></div>
+    <div class="rev"><div class="rev-head"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=80" alt=""><div class="rev-head-info"><h4>Simone Freitas</h4><p>Corte e Escova · 18 Jul</p></div><div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span class="off">★</span></div></div><p>Boa cliente, porém local de difícil acesso. Comunicação excelente.</p><div class="rev-date">há 6 dias</div></div>
+    <div class="rev"><div class="rev-head"><img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?w=80&q=80" alt=""><div class="rev-head-info"><h4>Gisely Silva</h4><p>Hidratação · 15 Jul</p></div><div class="rev-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div></div><p>Cliente incrível! Muito grata pela confiança. Ambiente aconchegante.</p><div class="rev-date">há 9 dias</div></div>`;
+  }
+}
+// ── RATING ──
+function setRating(id,n){
+  document.querySelectorAll('#'+id+' span').forEach((s,i)=>s.classList.toggle('on',i<n));
+}
+// ── TOAST ──
+let tt;
+function toast(msg){
+  const t=document.getElementById('toastEl');
+  t.textContent=msg;t.style.display='block';
+  clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',2800);
+}
+// ── MODAL ──
+function openModal(){document.getElementById('modal').classList.add('on')}
+function closeModal(e){if(e.target.id==='modal')document.getElementById('modal').classList.remove('on')}
+function closeModal2(){document.getElementById('modal').classList.remove('on')}
+function pickAdsSvc(el){
+  el.closest('#ads-svc').querySelectorAll('div[onclick]').forEach(d=>{
+    d.style.background='var(--bg)';d.style.borderColor='transparent';
+    const dot=d.querySelector('div[style*="border-radius:50%"]');
+    if(dot){dot.style.background='transparent';dot.innerHTML='';dot.style.border='2px solid var(--line)';}
+  });
+  el.style.background='var(--p3)';el.style.borderColor='var(--p)';
+  const dot=el.querySelector('div[style*="border-radius:50%"]');
+  if(dot){dot.style.background='var(--p)';dot.style.border='none';dot.innerHTML='<div style="width:8px;height:8px;border-radius:50%;background:#fff"></div>';}
+}
+function pickAdsPlan(el){
+  document.querySelectorAll('#ads-plan > div').forEach(d=>{
+    d.style.background='var(--bg)';d.style.borderColor='transparent';
+  });
+  el.style.background='var(--p3)';el.style.borderColor='var(--p)';
+}
+</script>
+</body>
+</html>
